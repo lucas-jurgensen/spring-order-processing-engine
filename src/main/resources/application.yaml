@@ -1,12 +1,37 @@
 server:
-  port: ${ORDER_SYSTEM_PORT}
+  port: 8081
 
 spring:
   application:
-    name: order-system
+    name: order-api-engine
 
   datasource:
-    url: ${ORDER_SYSTEM_POSTGRES_URL}
-    username: ${ORDER_SYSTEM_POSTGRES_USERNAME}
-    password: ${ORDER_SYSTEM_POSTGRES_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/ordersys
+    username: postgres
+    password: postgres
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
 
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+  kafka:
+    bootstrap-servers: localhost:9094
+
+    consumer:
+      group-id: order-api-engine
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.json.trusted.packages: "*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        
