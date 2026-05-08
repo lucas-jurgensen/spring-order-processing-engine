@@ -1,0 +1,39 @@
+server:
+  port: ${ORDER_API_ENGINE_PORT:8081}
+
+gateway:
+  url: ${ORDER_API_ENGINE_GATEWAY_URL:http://localhost:8082}
+
+spring:
+  application:
+    name: order-api-engine
+
+  datasource:
+    url: ${ORDER_API_ENGINE_POSTGRES_URL:jdbc:postgresql://localhost:5432/ordersys}
+    username: ${ORDER_API_ENGINE_POSTGRES_USERNAME:postgres}
+    password: ${ORDER_API_ENGINE_POSTGRES_PASSWORD:postgres}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+  kafka:
+    bootstrap-servers: ${ORDER_API_ENGINE_KAFKA_HOST:localhost}:${ORDER_API_ENGINE_KAFKA_PORT:9094}
+
+    consumer:
+      group-id: order-api-engine
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.json.trusted.packages: "*"
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
