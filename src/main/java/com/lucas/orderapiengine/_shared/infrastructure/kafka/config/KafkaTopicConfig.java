@@ -33,4 +33,28 @@ public class KafkaTopicConfig {
             .replicas(1)
             .build();
     }
+
+    @Bean
+    public NewTopic stockReservedTopic() {
+        return TopicBuilder.name(KafkaTopics.STOCK_RESERVED)
+            .partitions(3)
+            .replicas(1)
+            .build();
+    }
+
+    @Bean
+    public NewTopic orderShipped() {
+        return TopicBuilder.name(KafkaTopics.ORDER_SHIPPED)
+            .partitions(3)
+            .replicas(1)
+            .build();
+    }
+
+    @Bean
+    public NewTopic orderDelivered() {
+        return TopicBuilder.name(KafkaTopics.ORDER_DELIVERED)
+            .partitions(3)
+            .replicas(1)
+            .build();
+    }
 }

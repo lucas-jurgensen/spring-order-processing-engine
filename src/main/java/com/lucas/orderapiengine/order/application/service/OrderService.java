@@ -71,6 +71,13 @@ public class OrderService {
         orderRepository.save(order);
     } 
 
+    public void markDeliveredOrder(UUID orderId) {
+        Order order = findOrderById(orderId);
+        
+        order.deliver();
+        orderRepository.save(order);
+    }
+
     private Order findOrderById(UUID orderId) {
         return orderRepository.findById(orderId)
             .orElseThrow(); 

@@ -4,6 +4,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.lucas.orderapiengine._shared.infrastructure.kafka.topics.KafkaTopics;
+import com.lucas.orderapiengine.delivering.domain.event.OrderDeliveredEvent;
 import com.lucas.orderapiengine.order.application.service.OrderService;
 import com.lucas.orderapiengine.payment.domain.event.PaymentApprovedEvent;
 import com.lucas.orderapiengine.payment.domain.event.PaymentFailedEvent;
@@ -35,5 +36,10 @@ public class OrderConsumer {
     @KafkaListener(topics = KafkaTopics.ORDER_SHIPPED, groupId = "order-group")
     public void onOrderShipped(OrderShippedEvent event) {
         orderService.markShippedOrder(event.getOrderId());
+    }
+
+    @KafkaListener(topics = KafkaTopics.ORDER_DELIVERED, groupId = "order-group")
+    public void onOrderDelivered(OrderDeliveredEvent event) {
+        orderService.markDeliveredOrder(event.getOrderId());
     }
 }

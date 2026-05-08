@@ -10,6 +10,7 @@ import com.lucas.orderapiengine._shared.domain.event.DomainEvent;
 import com.lucas.orderapiengine.order.domain.enums.OrderStatus;
 import com.lucas.orderapiengine.order.domain.event.OrderCreatedEvent;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,7 +29,10 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.CREATED;
+
+    @Column(name = "total_amount")
     private BigDecimal totalAmount;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
     
     @OneToMany(cascade = CascadeType.ALL)

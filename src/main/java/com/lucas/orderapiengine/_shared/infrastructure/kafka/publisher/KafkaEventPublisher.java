@@ -7,8 +7,12 @@ import org.springframework.stereotype.Component;
 
 import com.lucas.orderapiengine._shared.domain.event.DomainEvent;
 import com.lucas.orderapiengine._shared.infrastructure.kafka.topics.KafkaTopics;
+import com.lucas.orderapiengine.delivering.domain.event.OrderDeliveredEvent;
 import com.lucas.orderapiengine.order.domain.event.OrderCreatedEvent;
 import com.lucas.orderapiengine.payment.domain.event.PaymentApprovedEvent;
+import com.lucas.orderapiengine.payment.domain.event.PaymentFailedEvent;
+import com.lucas.orderapiengine.shipping.domain.event.OrderShippedEvent;
+import com.lucas.orderapiengine.stock.domain.event.StockReservedEvent;
 
 @Component
 public class KafkaEventPublisher implements EventPublisher {
@@ -35,6 +39,22 @@ public class KafkaEventPublisher implements EventPublisher {
 
         if (event instanceof PaymentApprovedEvent) {
             return KafkaTopics.PAYMENT_APPROVED;
+        }
+
+        if (event instanceof PaymentFailedEvent) {
+            return KafkaTopics.PAYMENT_FAILED;
+        }
+
+        if (event instanceof StockReservedEvent) {
+            return KafkaTopics.STOCK_RESERVED;
+        }
+
+        if (event instanceof OrderShippedEvent) {
+            return KafkaTopics.ORDER_SHIPPED;
+        }
+
+        if (event instanceof OrderDeliveredEvent) {
+            return KafkaTopics.ORDER_DELIVERED;
         }
 
         throw new IllegalArgumentException(
