@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lucas.orderapiengine.order.application.dto.CreateOrderRequest;
 import com.lucas.orderapiengine.order.application.service.OrderService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,11 +21,11 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody CreateOrderRequest request) {
+    public ResponseEntity<?> create(@Valid @RequestBody CreateOrderRequest request) {
         UUID orderId = orderService.create(request);
 
         return ResponseEntity.ok(
-            "Pedido feito como sucesso: " + orderId
+            "Pedido feito como sucesso: " + orderId + " : " + request
         );
     }
 }

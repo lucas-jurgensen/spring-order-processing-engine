@@ -20,7 +20,7 @@ public class PaymentGatewayClient {
 
     public GatewayPaymentResponse process(GatewayPaymentRequest request) {
         return restClient.post()
-            .uri(gatewayUrl + "/api/paymentss")
+            .uri(gatewayUrl + "/api/payments")
             .body(request)
             .retrieve()
             .body(GatewayPaymentResponse.class);

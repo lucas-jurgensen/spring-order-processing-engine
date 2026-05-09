@@ -1,7 +1,5 @@
 package com.lucas.orderapiengine.order.domain.model;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Embeddable;
 
 @Embeddable
@@ -9,7 +7,7 @@ public class OrderPaymentDetails {
     private String holderName;
     private String cardNumber;
     private String cvv;
-    private LocalDate expiration;
+    private String expiration;
 
     protected OrderPaymentDetails() {}
 
@@ -17,7 +15,7 @@ public class OrderPaymentDetails {
         String holderName,
         String cardNumber,
         String cvv,
-        LocalDate expiration
+        String expiration
     ) {
         validate(holderName, cardNumber, cvv, expiration);
 
@@ -31,7 +29,7 @@ public class OrderPaymentDetails {
         String holderName,
         String cardNumber,
         String cvv,
-        LocalDate expiration
+        String expiration
     ) {
 
         if (holderName == null || holderName.isBlank()) {
@@ -63,7 +61,7 @@ public class OrderPaymentDetails {
         return cvv;
     }
 
-    public LocalDate getExpiration() {
+    public String getExpiration() {
         return expiration;
     }
 
