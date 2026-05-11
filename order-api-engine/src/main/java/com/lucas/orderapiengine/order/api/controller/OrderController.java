@@ -24,8 +24,6 @@ public class OrderController {
     public ResponseEntity<?> create(@Valid @RequestBody CreateOrderRequest request) {
         UUID orderId = orderService.create(request);
 
-        return ResponseEntity.ok(
-            "Pedido feito como sucesso: " + orderId + " : " + request
-        );
+        return ResponseEntity.ok("Pedido feito como sucesso: " + orderId);
     }
 }

@@ -2,7 +2,7 @@ server:
   port: ${ORDER_API_ENGINE_PORT:8081}
 
 gateway:
-  url: ${ORDER_API_ENGINE_GATEWAY_URL:http://localhost:8082}
+  url: ${PAYMENT_GATEWAY_URL:http://localhost:8082}
 
 spring:
   application:
@@ -23,7 +23,7 @@ spring:
     enabled: true
 
   kafka:
-    bootstrap-servers: ${ORDER_API_ENGINE_KAFKA_HOST:localhost}:${ORDER_API_ENGINE_KAFKA_PORT:9094}
+    bootstrap-servers: ${ORDER_API_ENGINE_KAFKA_HOST:localhost}:${ORDER_API_ENGINE_KAFKA_PORT:9092}
 
     consumer:
       group-id: order-api-engine
