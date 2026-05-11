@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: order-postgres
+    restart: always
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  kafka:
+    image: confluentinc/cp-kafka:7.7.0
+    container_name: order-kafka
+    ports:
+      - "${KAFKA_PORT:-9092}:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+      
+      KAFKA_LISTENERS: 'INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093'
+      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka:29092,EXTERNAL://localhost:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@localhost:9093'
+      
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  fake-payment-gateway:
+    build:
+      context: ./fake-payment-gateway
+
+    container_name: fake-payment-gateway
+
+    ports:
+      - "8082:8082"
+
+  app:
+    build:
+      context: ./order-api-engine
+
+    container_name: order-api-engine
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+      kafka:
+        condition: service_healthy
+
+      fake-payment-gateway:
+        condition: service_started
+
+    ports:
+      - "${APP_PORT}:8081"
+
+    environment:
+      ORDER_API_ENGINE_PORT: ${APP_PORT}
+
+      ORDER_API_ENGINE_POSTGRES_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      ORDER_API_ENGINE_POSTGRES_USERNAME: ${POSTGRES_USER}
+      ORDER_API_ENGINE_POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+      ORDER_API_ENGINE_KAFKA_HOST: kafka
+      ORDER_API_ENGINE_KAFKA_PORT: 29092
+
+      PAYMENT_GATEWAY_URL: http://fake-payment-gateway:8082
+
+volumes:
+  postgres_data:
